@@ -25,8 +25,35 @@ struct DeezerEndpoint {
 		])
 	}
 
-	static func playlists(user: String, token: String) -> DeezerEndpoint {
-		return DeezerEndpoint(host: "api.deezer.com", path: "/user/\(user)/playlists/", queryItems: [
+	static func playlists(user: DeezerUser, token: String) -> DeezerEndpoint {
+		let username: String
+		switch user {
+		case .Me:
+			username = "me"
+		case let .User(name):
+			username = name
+		}
+		return DeezerEndpoint(host: "api.deezer.com", path: "/user/\(username)/playlists/", queryItems: [
+			URLQueryItem(name: "access_token", value: token),
+			URLQueryItem(name: "output", value: "json"),
+		])
+	}
+
+	static func playlist(id: Int, token: String) -> DeezerEndpoint {
+		return DeezerEndpoint(host: "api.deezer.com", path: "/user/playlist/\(id)", queryItems: [
+			URLQueryItem(name: "access_token", value: token),
+			URLQueryItem(name: "output", value: "json"),
+		])
+	}
+
+	static func playlist(from playlist: DeezerResponse.Playlist, token: String) -> DeezerEndpoint {
+		return DeezerEndpoint(host: "api.deezer.com", path: "/user/playlist/\(playlist.id)", queryItems: [
+			URLQueryItem(name: "access_token", value: token),
+			URLQueryItem(name: "output", value: "json"),
+		])
+	}
+	static func tracks(from playlist: DeezerResponse.Playlist, token: String) -> DeezerEndpoint {
+		return DeezerEndpoint(host: "api.deezer.com", path: "/playlist/\(playlist.id)/tracks", queryItems: [
 			URLQueryItem(name: "access_token", value: token),
 			URLQueryItem(name: "output", value: "json"),
 		])
