@@ -2,9 +2,9 @@ import Foundation
 
 struct DeezerResponse {
 	struct Artist: Codable {
-		let id: Int?
-		let name: String?
-		let link: String?
+		let id: Int
+		let name: String
+		let link: String
 		let share: String?
 		let picture: String?
 		let picture_small: String?
@@ -33,8 +33,8 @@ struct DeezerResponse {
 	}
 
 	struct Genre: Codable {
-		let id: Int?
-		let name: String?
+		let id: Int
+		let name: String
 		let picture: String?
 		let picture_small: String?
 		let picture_medium: String?
@@ -100,10 +100,10 @@ struct DeezerResponse {
 	}
 
 	struct Album: Codable {
-		let id: Int?
-		let title: String?
+		let id: Int
+		let title: String
 		let upc: String?
-		let link: String?
+		let link: String
 		let share: String?
 		let cover: String?
 		let cover_small: String?
@@ -207,9 +207,9 @@ struct DeezerResponse {
 	}
 
 	struct Track: Codable {
-		let id: Int?
+		let id: Int
 		let readable: Bool?
-		let title: String?
+		let title: String
 		let title_short: String?
 		let title_version: String?
 		let unseen: Bool?
@@ -274,11 +274,11 @@ struct DeezerResponse {
 			return true
 		}
 
-		private enum CodingKeys: String, CodingKey {
-			case data
-			case checksum
-			case total
-			case next
-		}
+		// private enum CodingKeys: String, CodingKey {
+		// 	case data
+		// 	case checksum
+		// 	case total
+		// 	case next
+		// }
 	}
 }
