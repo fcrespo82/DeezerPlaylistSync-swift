@@ -282,3 +282,29 @@ struct DeezerResponse {
 		// }
 	}
 }
+
+extension DeezerResponse.User: Equatable {
+	static func == (lhs: DeezerResponse.User, rhs: DeezerResponse.User) -> Bool {
+		return
+			lhs.id == rhs.id
+	}
+}
+
+extension DeezerResponse.User: Hashable {
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(id)
+	}
+}
+
+extension DeezerResponse.Playlist: Equatable {
+	static func == (lhs: DeezerResponse.Playlist, rhs: DeezerResponse.Playlist) -> Bool {
+		return
+			lhs.title == rhs.title || lhs.id == rhs.id
+	}
+}
+
+extension DeezerResponse.Playlist: Hashable {
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(title)
+	}
+}
