@@ -11,7 +11,7 @@ struct CompareCommand: Command {
 
   var options: [CommandOption] {
     return [
-      .flag(name: "playlist", short: "p"),
+      .flag(name: "include-tracks", short: "t"),
       .flag(name: "verbose", short: "v"),
     ]
   }
@@ -40,15 +40,36 @@ struct CompareCommand: Command {
     let verbose = context.options["verbose"] ?? "false"
     context.console.print("Comparing \(user_a) to \(user_b)\n")
 
+    let playlists_a = Set(try client_a.playlists())
+    let playlists_b = Set(try client_b.playlists())
+
     context.console.print("\nPlaylists from \(user_a)")
-    _ = try client_a.playlists().map { playlist in
-      print("\(playlist.title) \t - \(playlist.nb_tracks) tracks")
+    let only_in_a = playlists_a.subtracting(playlists_b).sorted()
+    only_in_a.map { playlist in
+      context.console.print(playlist.title)
+    }
+    context.console.print("\nPlaylists from \(user_b)")
+    let only_in_b = playlists_b.subtracting(playlists_a).sorted()
+    only_in_b.map { playlist in
+      context.console.print(playlist.title)
     }
 
-    context.console.print("\nPlaylists from \(user_b)")
-    _ = try client_b.playlists().map { playlist in
-      print("\(playlist.title) \t - \(playlist.nb_tracks) tracks")
+    let in_both = playlists_a.intersection(playlists_b).sorted()
+    context.console.print("\nIn both")
+
+    zipToLongest(only_in_a, only_in_b, firstFillValue: nil, secondFillValue: nil).map { pl in
+      print("\(pl.0?.title), \(pl.1?.title)")
+      // let a = playlists_a.first { pl in
+      //   pl.title == playlist.title
+      // }
+      // let b = playlists_b.first { pl in
+      //   pl.title == playlist.title
+      // }
+      // print("\(playlist.title.padding(toLength: 40, withPad: " ", startingAt: 0)) \t - \(user_a): \(String(format: "%03d", a!.nb_tracks)) tracks \t- \(user_b): \(String(format: "%03d", b!.nb_tracks)) tracks")
     }
+
+    
+
     return .done(on: context.container)
   }
 }

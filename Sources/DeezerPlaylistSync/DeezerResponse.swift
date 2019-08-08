@@ -283,7 +283,15 @@ struct DeezerResponse {
 	}
 }
 
-extension DeezerResponse.User: Equatable {
+extension DeezerResponse.User: Comparable, Equatable {
+	static func < (lhs: DeezerResponse.User, rhs: DeezerResponse.User) -> Bool {
+		if lhs.name != rhs.name {
+			return lhs.name < rhs.name
+		} else {
+			return lhs.id < rhs.id
+		}
+	}
+
 	static func == (lhs: DeezerResponse.User, rhs: DeezerResponse.User) -> Bool {
 		return
 			lhs.id == rhs.id
@@ -296,7 +304,15 @@ extension DeezerResponse.User: Hashable {
 	}
 }
 
-extension DeezerResponse.Playlist: Equatable {
+extension DeezerResponse.Playlist: Comparable, Equatable {
+	static func < (lhs: DeezerResponse.Playlist, rhs: DeezerResponse.Playlist) -> Bool {
+		if lhs.title != rhs.title {
+			return lhs.title < rhs.title
+		} else {
+			return lhs.id < rhs.id
+		}
+	}
+
 	static func == (lhs: DeezerResponse.Playlist, rhs: DeezerResponse.Playlist) -> Bool {
 		return
 			lhs.title == rhs.title || lhs.id == rhs.id
