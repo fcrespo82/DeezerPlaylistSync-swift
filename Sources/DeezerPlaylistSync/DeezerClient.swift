@@ -43,7 +43,7 @@ class DeezerClient {
         }.resume()
     }
 
-    private func requestPost<D:Encodable>(_ endpoint: DeezerEndpoint, data: D, completion: @escaping (Data?) -> Void) {
+    private func requestPost<D: Encodable>(_ endpoint: DeezerEndpoint, data: D, completion: @escaping (Data?) -> Void) {
         var request = URLRequest(url: endpoint.url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -132,10 +132,10 @@ class DeezerClient {
             throw DeezerError.UserNotLogged
         }
         let endpoint = DeezerEndpoint.playlists(user: user, token: token!)
-
         request(endpoint) { data in
+            // print(String(data: data!, encoding: .utf8))
             guard let parsed = try? JSONDecoder().decode(DeezerResponse.List<DeezerResponse.Playlist>.self, from: data!) else {
-                print("Error: Couldn't decode data:")
+                print("Error: Couldn't decode data: \(String(data: data!, encoding: .utf8))")
                 return
             }
             result = parsed.data
@@ -156,7 +156,7 @@ class DeezerClient {
         request(endpoint) { data in
             // print(String(data:data!, encoding: .utf8))
             guard let parsed = try? JSONDecoder().decode(DeezerResponse.List<DeezerResponse.Track>.self, from: data!) else {
-                print("Error: Couldn't decode data:")
+                print("Error: Couldn't decode data: \(String(data: data!, encoding: .utf8))")
                 return
             }
             result = parsed.data
@@ -171,20 +171,19 @@ class DeezerClient {
         // var playlist: DeezerResponse.Playlist?
         // let endpoint = DeezerEndpoint.playlist(from: playlist.id, token: token!)
         let tracksEndpoint = DeezerEndpoint.playlist(from: playlist, token: token!)
-        
+
         requestPost(tracksEndpoint, data: tracks) { _ in
             sem.signal()
         }
         _ = sem.wait(timeout: .now() + 10.0)
     }
 
-    func createPlaylist(title: String, is_public: Bool=false){
+    func createPlaylist(title _: String, is_public _: Bool = false) {
         let endpoint = DeezerEndpoint.playlists(user: .Me, token: token!)
-        // Dictionary() Create a json with title and public 
-        requestPost(endpoint, data: data) { data in
-
+        // Dictionary() Create a json with title and public
+        requestPost(endpoint, data: data) { _ in
         }
-            
+
         // return resp
     }
 }

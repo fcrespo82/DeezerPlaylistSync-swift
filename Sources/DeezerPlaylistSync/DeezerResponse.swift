@@ -314,8 +314,7 @@ extension DeezerResponse.Playlist: Comparable, Equatable {
 	}
 
 	static func == (lhs: DeezerResponse.Playlist, rhs: DeezerResponse.Playlist) -> Bool {
-		return
-			lhs.title == rhs.title || lhs.id == rhs.id
+		return lhs.title == rhs.title || lhs.id == rhs.id
 	}
 }
 

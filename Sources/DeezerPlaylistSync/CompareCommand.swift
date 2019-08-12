@@ -57,8 +57,18 @@ struct CompareCommand: Command {
     let in_both = playlists_a.intersection(playlists_b).sorted()
     context.console.print("\nIn both")
 
+    // print("\("teste", width: 10)")
+    // print(FormattedString(string: "teste").width(10).rightJ().formatted)
+
+    // Mostra
+    print("\(user_a) - \(user_b)")
     zipToLongest(only_in_a, only_in_b, firstFillValue: nil, secondFillValue: nil).map { pl in
-      print("\(pl.0?.title), \(pl.1?.title)")
+      let title_a = pl.0?.title
+      let title_b = pl.1?.title
+      print("\(title_a ?? "") - \(title_b ?? "")")
+
+      // guard let title_b = pl.1?.title else { return }
+
       // let a = playlists_a.first { pl in
       //   pl.title == playlist.title
       // }
@@ -67,8 +77,6 @@ struct CompareCommand: Command {
       // }
       // print("\(playlist.title.padding(toLength: 40, withPad: " ", startingAt: 0)) \t - \(user_a): \(String(format: "%03d", a!.nb_tracks)) tracks \t- \(user_b): \(String(format: "%03d", b!.nb_tracks)) tracks")
     }
-
-    
 
     return .done(on: context.container)
   }
