@@ -20,7 +20,7 @@ struct PlaylistsCommand: Command {
 
   func run(using context: CommandContext) throws -> Future<Void> {
     let user = try context.argument("user")
-    let verbose = context.options["verbose"] ?? "false"
+    let verbose = Bool(context.options["verbose"] ?? "false")!
 
     guard let token = DeezerToken.forUser(user) else {
       print("Cannot find token for \(user)")
@@ -28,9 +28,9 @@ struct PlaylistsCommand: Command {
     }
     let client = DeezerClient(withToken: token)
 
-    context.console.print("\nPlaylists from \(user)")
-    _ = try client.playlists().map { playlist in
-      print("\(playlist.title) \t - \(playlist.nb_tracks) tracks")
+    context.console.print(context.console.centered("Playlists from \(user)", padding: "="))
+    _ = try client.playlists().sorted().map { playlist in
+      context.console.print(context.console.two_columns(leftString: playlist.title, leftFormatter: context.console.halfLeft, rightString: "\(playlist.nb_tracks) tracks", rightFormatter: context.console.halfRight, separator: ""))
     }
 
     return .done(on: context.container)
