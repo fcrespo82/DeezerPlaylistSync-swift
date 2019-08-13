@@ -4,40 +4,40 @@ import Foundation
 struct CompareCommand: Command {
   var arguments: [CommandArgument] {
     return [
-      .argument(name: "user_a"),
-      .argument(name: "user_b"),
+      .argument(name: "user_a", help: ["User A that will be compared"]),
+      .argument(name: "user_b", help: ["User B that will be compared"]),
     ]
   }
 
   var options: [CommandOption] {
     return [
-      .flag(name: "include-tracks", short: "t"),
-      .flag(name: "verbose", short: "v"),
+      .flag(name: "show-from-both", short: "b", help: ["Show what is common to both users"]),
+      .flag(name: "include-tracks", short: "t", help: ["Include tracks in comparison"]),
+      .flag(name: "verbose", short: "v", help: ["Show more details"]),
     ]
   }
 
   var help: [String] {
-    return ["Compare between users"]
+    return ["Comparision between users"]
   }
 
   func run(using context: CommandContext) throws -> Future<Void> {
     let user_a = try context.argument("user_a")
-    // let token_a = DeezerToken.forUser(user_a)
+    let user_b = try context.argument("user_b")
+    let show_from_both = Bool(context.options["show-from-both"] ?? "false")!
+
     guard let token_a = DeezerToken.forUser(user_a) else {
       print("Cannot find token for \(user_a)")
       exit(1)
     }
     let client_a = DeezerClient(withToken: token_a)
 
-    let user_b = try context.argument("user_b")
-    // let token_b = DeezerToken.forUser(user_b)
     guard let token_b = DeezerToken.forUser(user_b) else {
       print("Cannot find token for \(user_b)")
       exit(1)
     }
     let client_b = DeezerClient(withToken: token_b)
 
-    // let verbose = context.options["verbose"] ?? "false"
     context.console.print(context.console.centered("Comparing \(user_a) to \(user_b)", padding: "="))
 
     let playlists_a = try client_a.playlists()
@@ -53,10 +53,12 @@ struct CompareCommand: Command {
       context.console.print(context.console.two_columns(leftString: title_a, leftFormatter: context.console.halfLeft, rightString: title_b, rightFormatter: context.console.halfLeft))
     }
 
-    context.console.print(context.console.centered("In both", padding: "="))
+    if show_from_both {
+      context.console.print(context.console.centered("Playlists in both users", padding: "="))
 
-    _ = in_both.map { playlist in
-      context.console.print(playlist.title)
+      _ = in_both.map { playlist in
+        context.console.print(playlist.title)
+      }
     }
     context.console.print(context.console.centered("", padding: "="))
     return .done(on: context.container)
