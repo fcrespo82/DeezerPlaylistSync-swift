@@ -149,9 +149,20 @@ class DeezerClient {
         return try playlists(user: user).filter { $0.title == playlist }.first
     }
 
-    func tracks(from playlist: DeezerResponse.Playlist) -> [DeezerResponse.Track] {
+    func tracks(fromPlaylistNamed name: String) -> Set<DeezerResponse.Track> {
+        var tracks = Set<DeezerResponse.Track>()
+        do {
+            let playlist = try self.playlist(named: name)
+            tracks = self.tracks(from: playlist!)
+        } catch {
+            print(error)
+        }
+        return tracks
+    }
+
+    func tracks(from playlist: DeezerResponse.Playlist) -> Set<DeezerResponse.Track> {
         let sem = DispatchSemaphore(value: 0)
-        var result: [DeezerResponse.Track]?
+        var result: Set<DeezerResponse.Track>?
         let endpoint = DeezerEndpoint.tracks(from: playlist, token: token!)
         request(endpoint) { data in
             // print(String(data:data!, encoding: .utf8))
@@ -159,14 +170,14 @@ class DeezerClient {
                 print("Error: Couldn't decode data: \(String(data: data!, encoding: .utf8))")
                 return
             }
-            result = parsed.data
+            result = Set(parsed.data)
             sem.signal()
         }
         _ = sem.wait(timeout: .now() + 10.0)
         return result!
     }
 
-    func addTracks(to playlist: DeezerResponse.Playlist, tracks: [DeezerResponse.Track]) {
+    func addTracks(to playlist: DeezerResponse.Playlist, tracks: Set<DeezerResponse.Track>) {
         let sem = DispatchSemaphore(value: 0)
         // var playlist: DeezerResponse.Playlist?
         // let endpoint = DeezerEndpoint.playlist(from: playlist.id, token: token!)

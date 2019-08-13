@@ -52,10 +52,12 @@ struct DeezerEndpoint {
 			URLQueryItem(name: "output", value: "json"),
 		])
 	}
-	static func tracks(from playlist: DeezerResponse.Playlist, token: String) -> DeezerEndpoint {
+
+	static func tracks(from playlist: DeezerResponse.Playlist, limit: Int = 9999, token: String) -> DeezerEndpoint {
 		return DeezerEndpoint(host: "api.deezer.com", path: "/playlist/\(playlist.id)/tracks", queryItems: [
 			URLQueryItem(name: "access_token", value: token),
 			URLQueryItem(name: "output", value: "json"),
+			// URLQueryItem(name: "limit", value: String(limit)),
 		])
 	}
 

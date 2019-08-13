@@ -8,6 +8,7 @@ let container = BasicContainer(config: Config(), environment: Environment.produc
 var commandConfig = CommandConfig()
 commandConfig.use(PlaylistsCommand(), as: "playlists", isDefault: false)
 commandConfig.use(CompareCommand(), as: "compare", isDefault: false)
+commandConfig.use(CompareTracksCommand(), as: "compare_tracks", isDefault: false)
 container.services.register(commandConfig)
 
 let group = try commandConfig.resolve(for: container).group()

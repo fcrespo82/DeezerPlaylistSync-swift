@@ -323,3 +323,23 @@ extension DeezerResponse.Playlist: Hashable {
 		hasher.combine(title)
 	}
 }
+
+extension DeezerResponse.Track: Comparable, Equatable {
+	static func < (lhs: DeezerResponse.Track, rhs: DeezerResponse.Track) -> Bool {
+		if lhs.title != rhs.title {
+			return lhs.title < rhs.title
+		} else {
+			return lhs.id < rhs.id
+		}
+	}
+
+	static func == (lhs: DeezerResponse.Track, rhs: DeezerResponse.Track) -> Bool {
+		return lhs.title == rhs.title || lhs.id == rhs.id
+	}
+}
+
+extension DeezerResponse.Track: Hashable {
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(title)
+	}
+}
