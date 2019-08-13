@@ -125,9 +125,9 @@ class DeezerClient {
         }
     }
 
-    func playlists(user: DeezerUser = DeezerUser.Me) throws -> [DeezerResponse.Playlist] {
+    func playlists(user: DeezerUser = DeezerUser.Me) throws -> Set<DeezerResponse.Playlist> {
         let sem = DispatchSemaphore(value: 0)
-        var result: [DeezerResponse.Playlist]?
+        var result: Set<DeezerResponse.Playlist>?
         guard logged else {
             throw DeezerError.UserNotLogged
         }
@@ -138,7 +138,7 @@ class DeezerClient {
                 print("Error: Couldn't decode data: \(String(data: data!, encoding: .utf8))")
                 return
             }
-            result = parsed.data
+            result = Set(parsed.data)
             sem.signal()
         }
         _ = sem.wait(timeout: .now() + 10.0)
