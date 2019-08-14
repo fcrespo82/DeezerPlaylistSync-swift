@@ -18,6 +18,6 @@ var commandInput = CommandInput(arguments: CommandLine.arguments)
 let terminal = Terminal()
 do {
 	try terminal.run(group, input: &commandInput, on: container).wait()
-} catch let error as ConsoleError {
+} catch let error as CommandError {
 	print(error)
 }
