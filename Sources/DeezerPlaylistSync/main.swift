@@ -10,6 +10,7 @@ commandConfig.use(AuthorizationCommand(), as: "authorize", isDefault: false)
 commandConfig.use(CompareCommand(), as: "compare", isDefault: false)
 commandConfig.use(CompareTracksCommand(), as: "compare_tracks", isDefault: false)
 commandConfig.use(PlaylistsCommand(), as: "playlists", isDefault: false)
+commandConfig.use(TracksCommand(), as: "tracks", isDefault: false)
 container.services.register(commandConfig)
 
 let group = try commandConfig.resolve(for: container).group()
