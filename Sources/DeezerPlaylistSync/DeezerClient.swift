@@ -69,29 +69,27 @@ class DeezerClient {
         }
         do {
             try server.start(8000)
-            while shouldKeepRunning, RunLoop.current.run(mode: .default, before: Date.distantFuture) {}
+            while shouldKeepRunning, RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 15)) {
+                DispatchQueue.main.async {
+                    self.shouldKeepRunning = false
+                }
+                print("Waiting 15s")
+            }
         } catch {
             print("\(error)")
         }
     }
 
     func authorize() throws {
-        // let permissions = (self.permissions?.map { (permission) -> String in
-        //     permission.rawValue
-        // }.joined(separator: ","))!
-
         guard let appId = self.appId, let redirectUri = self.redirectUri, let secret = self.secret, let permissions = self.permissions else { throw DeezerError.NotSetupCorrectly }
 
-        // print("https://connect.deezer.com/oauth/auth.php?app_id=\(appId)&redirect_uri=\(redirectUri)&perms=\(permissions)")
-        let endpoint = DeezerEndpoint.auth(app_id: appId, redirect_uri: redirectUri, permissions: permissions)
-        // let url = URL(string: "https://connect.deezer.com/oauth/auth.php?app_id=\(appId)&redirect_uri=\(redirectUri)&perms=\(permissions)")!
+        let authEndpoint = DeezerEndpoint.auth(app_id: appId, redirect_uri: redirectUri, permissions: permissions)
 
-        NSWorkspace.shared.open(endpoint.url)
+        NSWorkspace.shared.open(authEndpoint.url)
 
         listen { code in
-            print("After Listen \(code)")
-            let url2 = URL(string: "https://connect.deezer.com/oauth/access_token.php?app_id=\(appId)&secret=\(secret)&code=\(code)&output=json")!
-            URLSession.shared.dataTask(with: url2) { data, _, _ in
+            let tokenEndpoint = DeezerEndpoint.token(app_id: appId, secret: secret, code: code)
+            URLSession.shared.dataTask(with: tokenEndpoint.url) { data, _, _ in
                 guard let data = data else { return }
                 do {
                     let decoder = JSONDecoder()
@@ -109,13 +107,13 @@ class DeezerClient {
                     if let encodedData = try? JSONEncoder().encode(tokenList) {
                         do {
                             try encodedData.write(to: tokensPath)
+                            print("User authorized successfully, you can now use other commands of this client")
                         } catch {
                             print("Failed to write JSON data: \(error.localizedDescription)")
                         }
                     }
-                    // Salvar token em algum arquivo
-                } catch let err {
-                    print("Err", err)
+                } catch {
+                    print("Error: \(error)")
                 }
                 DispatchQueue.main.async {
                     self.shouldKeepRunning = false
@@ -135,7 +133,7 @@ class DeezerClient {
         request(endpoint) { data in
             // print(String(data: data!, encoding: .utf8))
             guard let parsed = try? JSONDecoder().decode(DeezerResponse.List<DeezerResponse.Playlist>.self, from: data!) else {
-                print("Error: Couldn't decode data: \(String(data: data!, encoding: .utf8))")
+                print("Error: Couldn't decode data: \(String(data: data!, encoding: .utf8) ?? "Can't get data from response")")
                 return
             }
             result = Set(parsed.data)
@@ -167,7 +165,7 @@ class DeezerClient {
         request(endpoint) { data in
             // print(String(data:data!, encoding: .utf8))
             guard let parsed = try? JSONDecoder().decode(DeezerResponse.List<DeezerResponse.Track>.self, from: data!) else {
-                print("Error: Couldn't decode data: \(String(data: data!, encoding: .utf8))")
+                print("Error: Couldn't decode data: \(String(data: data!, encoding: .utf8) ?? "Can't get data from response")")
                 return
             }
             result = Set(parsed.data)

@@ -17,8 +17,9 @@ struct DeezerEndpoint {
 		])
 	}
 
-	static func token(app_id _: String, secret: String, code: String) -> DeezerEndpoint {
+	static func token(app_id: String, secret: String, code: String) -> DeezerEndpoint {
 		return DeezerEndpoint(host: "connect.deezer.com", path: "/oauth/access_token.php", queryItems: [
+			URLQueryItem(name: "app_id", value: app_id),
 			URLQueryItem(name: "secret", value: secret),
 			URLQueryItem(name: "code", value: code),
 			URLQueryItem(name: "output", value: "json"),
@@ -53,7 +54,7 @@ struct DeezerEndpoint {
 		])
 	}
 
-	static func tracks(from playlist: DeezerResponse.Playlist, limit: Int = 9999, token: String) -> DeezerEndpoint {
+	static func tracks(from playlist: DeezerResponse.Playlist, limit _: Int = 9999, token: String) -> DeezerEndpoint {
 		return DeezerEndpoint(host: "api.deezer.com", path: "/playlist/\(playlist.id)/tracks", queryItems: [
 			URLQueryItem(name: "access_token", value: token),
 			URLQueryItem(name: "output", value: "json"),
